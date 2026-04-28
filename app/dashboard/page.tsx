@@ -353,7 +353,7 @@ export default function Page() {
           {loadingStocks ? (
             <LoadingPulse message="Loading sectors..." />
           ) : sectors.length === 0 ? (
-            <p className={current.text}>
+            <p className={current.invt}>
               Add stocks to see sector breakdown.
             </p>
           ) : (

@@ -332,12 +332,12 @@ export function ComingSoon({
 
 // Empty State
 export function EmptyState({ message }: { message: string }) {
-  const { theme } = useTheme()
-  const current = themes[theme]
+  const [theme, setTheme] = useState<Theme>(useTheme().theme ? 'light' : 'dark');
+  const current = theme === useTheme().theme ? themes.dark : themes.light
 
   return (
     <div className="flex items-center justify-center h-64">
-      <p className={`text-sm ${current.mutedText}`}>{message}</p>
+      <p className={`text-sm ${current.invt}`}>{message}</p>
     </div>
   )
 }
