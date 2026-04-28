@@ -53,7 +53,7 @@ export const themes = {
       active: {background:'transparent', borderColor: '#007AFF', color:'#007AFF'},
       inactive: 'bg-transparent border border-transparent text-white cursor-pointer hover:border-white/40 hover:text-white'},
     table:{
-      hover:{background: 'rgba(0,0,0,0.1)'}
+      hover:{background: 'rgba(0,0,0,0.3)'}
     },
   },
 
@@ -103,7 +103,7 @@ export const themes = {
       inactive: 'bg-transparent border border-transparent text-black cursor-pointer hover:border-black/40 hover:text-black',
     },
     table:{
-      hover:{background: 'rgba(0,0,0,0.5)'}
+      hover:{background: 'rgba(255,255,255,0.3)'}
     },
   },
 }
