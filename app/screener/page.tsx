@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { getMassQuotes } from '@/app/lib/finnhub'
-import { SectionCard, LoadingPulse } from '@/app/components/ui'
+import { SectionCard, LoadingPulse, themes, Theme, useTheme } from '@/app/components/ui'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -71,13 +71,17 @@ function fmtVolume(v: number | null) {
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function FilterChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  
+  const [theme, setTheme] = useState<Theme>(useTheme() ? 'dark' : 'light');
+  const current = theme === useTheme().theme ? themes.light : themes.dark
+
   return (
     <button
       onClick={onClick}
       className={`px-3 py-1 rounded-full text-xs font-medium transition-all border ${
         active
-          ? 'bg-blue-500/20 border-blue-500/60 text-blue-300'
-          : 'bg-white/5 border-white/10 text-white/50 hover:border-white/30 hover:text-white/70'
+          ? 'bg-blue-500 border-blue-500 text-white'
+          : current.filter.inactive
       }`}
     >
       {label}
@@ -86,19 +90,26 @@ function FilterChip({ label, active, onClick }: { label: string; active: boolean
 }
 
 function SortIcon({ field, sortField, sortDir }: { field: string; sortField: string; sortDir: 'asc' | 'desc' }) {
-  if (sortField !== field) return <span className="text-white/20 ml-1">↕</span>
-  return <span className="text-blue-400 ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>
+  const [theme, setTheme] = useState<Theme>(useTheme() ? 'dark' : 'light');
+  const current = theme === useTheme().theme ? themes.dark : themes.light
+
+  if (sortField !== field) return <span className={`${current.subText} ml-1`}>↕</span>
+  return <span className={`${current.colored.blue} font-bold ml-1`}>{sortDir === 'asc' ? '↑' : '↓'}</span>
 }
 
 function ChangeCell({ val, pct }: { val: number | null; pct: number | null }) {
-  if (val === null || pct === null) return <span className="text-white/30">—</span>
+  const [theme, setTheme] = useState<Theme>(useTheme() ? 'dark' : 'light');
+  const current = theme === useTheme().theme ? themes.dark : themes.light
+  
+  if (val === null || pct === null) return <span className={`${current.invt}`}>—</span>
   const positive = pct >= 0
   return (
-    <span className={positive ? 'text-green-400' : 'text-red-400'}>
+    <span className={positive ? current.colored.green : current.colored.red}>
       {positive ? '+' : ''}{fmt(pct)}%
     </span>
   )
 }
+
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
@@ -113,6 +124,9 @@ export default function Screener() {
   const [rows, setRows] = useState<StockRow[]>([])
   const [loading, setLoading] = useState(true)
   const [progress, setProgress] = useState(0)
+
+  const [theme, setTheme] = useState<Theme>(useTheme() ? 'dark' : 'light');
+  const current = theme === useTheme().theme ? themes.light : themes.dark
 
   const tickerList = useCallback(() => {
     const base = sector === 'All'
@@ -184,15 +198,17 @@ export default function Screener() {
     { key: 'ticker',        label: 'Ticker' },
     { key: 'company',       label: 'Company' },
     { key: 'sector',        label: 'Sector' },
-    { key: 'price',         label: 'Price',    align: 'right' },
-    { key: 'changePercent', label: 'Change %', align: 'right' },
-    { key: 'marketCap',     label: 'Mkt Cap',  align: 'right' },
-    { key: 'volume',        label: 'Volume',   align: 'right' },
+    { key: 'price',         label: 'Price',    align: 'center' },
+    { key: 'changePercent', label: 'Change %', align: 'center' },
+    { key: 'marketCap',     label: 'Mkt Cap',  align: 'center' },
+    { key: 'volume',        label: 'Volume',   align: 'center' },
   ]
 
   return (
     <div className="space-y-4 p-4 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-center text-white">Stock Screener</h1>
+      <h1 className={['text-3xl font-bold text-center', current.invt].join(' ')}>
+        Stock Screener
+      </h1>
 
       {/* Filters */}
       <SectionCard title="Filters">
@@ -202,8 +218,13 @@ export default function Screener() {
             placeholder="Search ticker or company…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg text-white text-sm placeholder-white/40 focus:outline-none transition"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)' }}
+            className="w-full px-4 py-3 rounded-lg text-sm focus:outline-none transition"
+            style={{
+              background: current.input.norm.background,
+              border: current.input.norm.border,
+              color: current.input.norm.color,
+            }}
+            // style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)' }}
           />
           <div className="flex gap-2 flex-wrap">
             {SECTORS.map(s => (
@@ -218,7 +239,7 @@ export default function Screener() {
 
         {/* Progress bar */}
         {loading && (
-          <div className="w-full rounded-full h-0.5 mb-4" style={{ background: 'rgba(255,255,255,0.1)' }}>
+          <div className="w-full rounded-full h-0.5 mb-4" style={{ background: current.input.norm.background }}>
             <div
               className="bg-blue-500 h-0.5 rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }}
@@ -230,14 +251,15 @@ export default function Screener() {
           <LoadingPulse message="Fetching quotes…" />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+            <table className="w-full text-center text-sm">
+              <thead style={{ borderBottom: current.input.norm.color}}>
                 <tr>
                   {cols.map(({ key, label, align }) => (
                     <th
                       key={key}
                       onClick={() => handleSort(key)}
-                      className={`pb-2 text-white/50 font-medium text-xs cursor-pointer hover:text-white/80 transition select-none ${align === 'right' ? 'text-right' : 'text-left'}`}
+                      className={`pb-2 text-center ${current.invt} font-bold text-s cursor-pointer hover:${current.table.hover} transition select-none`}
+                        style={{ borderBottom: current.glass.border }}
                     >
                       {label}
                       <SortIcon field={key} sortField={sortField} sortDir={sortDir} />
@@ -251,28 +273,28 @@ export default function Screener() {
                     key={row.ticker}
                     onClick={() => router.push(`/details?symbol=${row.ticker}`)}
                     className="cursor-pointer group"
-                    style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                    style={{ borderBottom: current.glass.border }}
+                    onMouseEnter={e => (e.currentTarget.style.background = current.table.hover.background)}
                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                   >
-                    <td className="py-2 font-semibold text-sm text-blue-400 group-hover:text-blue-300">
+                    <td className={`py-2 font-semibold text-sm ${current.colored.blue} group-hover:text-blue-300`}>
                       {row.ticker}
                     </td>
-                    <td className="py-2 text-sm text-white/70">{row.company}</td>
+                    <td className={`py-2 text-sm ${current.invt}`}>{row.company}</td>
                     <td className="py-2">
-                      <span className="px-2 py-0.5 rounded-full text-xs text-white/50"
-                        style={{ background: 'rgba(255,255,255,0.08)' }}>
+                      <span className={`px-2 py-0.5 rounded-full text-xs text-white`}
+                        style={{ background: current.button.login.norm.background }}>
                         {row.sector}
                       </span>
                     </td>
-                    <td className="py-2 text-right text-sm text-white/70 font-mono">
+                    <td className={`py-2 text-center text-sm ${current.invt} font-mono`}>
                       {row.price !== null ? `$${fmt(row.price)}` : '—'}
                     </td>
-                    <td className="py-2 text-right text-sm font-semibold font-mono">
+                    <td className={`py-2 text-center text-sm font-semibold font-mono`}>
                       <ChangeCell val={row.change} pct={row.changePercent} />
                     </td>
-                    <td className="py-2 text-right text-sm text-white/50">{row.marketCap}</td>
-                    <td className="py-2 text-right text-sm text-white/50 font-mono">
+                    <td className={`py-2 text-center text-sm ${current.invt}`}>{row.marketCap}</td>
+                    <td className={`py-2 text-center text-sm ${current.invt} font-mono`}>
                       {fmtVolume(row.volume)}
                     </td>
                   </tr>
@@ -284,25 +306,24 @@ export default function Screener() {
 
         {/* Pagination */}
         {!loading && totalPages > 1 && (
-          <div className="flex items-center justify-between pt-3 mt-3 text-xs text-white/40"
-            style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+          <div className={`flex items-center justify-between pt-3 mt-3 text-xs ${current.invt}`}>
             <span>
-              {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, sorted.length)} of {sorted.length}
+              {(page - 1) * PAGE_SIZE + 1} – {Math.min(page * PAGE_SIZE, sorted.length)} of {sorted.length}
             </span>
             <div className="flex gap-2">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1 rounded text-white/50 hover:text-white disabled:opacity-30 transition"
-                style={{ border: '1px solid rgba(255,255,255,0.1)' }}
+                className={`px-3 py-1 rounded ${current.invt}/10 hover:${current.invt} cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition `}
+                style={{ border: current.glass.border }}
               >
                 ← Prev
               </button>
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1 rounded text-white/50 hover:text-white disabled:opacity-30 transition"
-                style={{ border: '1px solid rgba(255,255,255,0.1)' }}
+                className={`px-3 py-1 rounded ${current.invt} cursor-pointer hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition`}
+                style={{ border: current.glass.border }}
               >
                 Next →
               </button>
@@ -311,7 +332,9 @@ export default function Screener() {
         )}
       </SectionCard>
 
-      <p className="text-center text-white/30 text-xs mt-4">Designed by Req</p>
+      <p className={['text-center', current.invt, 'text-xs mt-4'].join(' ')}>
+        Designed by Req
+      </p>
     </div>
   )
 }

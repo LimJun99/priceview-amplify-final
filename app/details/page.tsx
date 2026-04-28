@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { getQuote, getCompanyNews, searchSymbol } from '@/app/lib/finnhub'
-import { GlassCard, SectionCard, ComingSoon, NewsItem, LoadingPulse, Button } from '@/app/components/ui'
+import { GlassCard, SectionCard, ComingSoon, NewsItem, LoadingPulse, Button, themes, Theme, useTheme } from '@/app/components/ui'
 import { apiFetch } from '../lib/api'
 
 function TradingViewWidget({ symbol }: { symbol: string }) {
@@ -48,6 +48,9 @@ function DetailsContent() {
   const [searching, setSearching] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  const [theme, setTheme] = useState<Theme>(useTheme().theme ? 'light' : 'dark');
+  const current = theme === useTheme().theme ? themes.dark : themes.light
+
   const [quote, setQuote] = useState<{
     price: number; change: number; changePercent: number
     high: number; low: number; open: number
@@ -90,41 +93,8 @@ function DetailsContent() {
     setQuery(''); setShowDropdown(false)
     router.push(`/details?symbol=${sym}`)
   }
-
-  // useEffect(() => { //supabase auth listener
-  //   async function init() {
-  //     const { data } = await supabase.auth.getUser()
-  //     const uid = data.user?.id ?? null
-  //     setUserId(uid)
-  //     if (uid) {
-  //       const { data: existing } = await supabase.from('watchlist').select('id')
-  //         .eq('user_id', uid).eq('symbol', symbol).maybeSingle()
-  //       setTracked(!!existing)
-  //     }
-  //   }
-  //   init()
-  // }, [symbol])
   useEffect(() => {
     async function init() {
-      //   const token = localStorage.getItem('token'); // moved to api helper
-
-      //     if (!token) return;
-
-      //     const res = await fetch(
-      //       `http://3.149.137.146:3000/watchlist/check?symbol=${symbol}`,
-      //       {
-      //         headers: {
-      //           Authorization: `Bearer ${token}`,
-      //         },
-      //       }
-      //     );
-
-      //     const data = await res.json();
-      //     setTracked(data.exists);
-      //   }
-
-      //   init();
-      // }, [symbol]);
         try {
           const data = await apiFetch(`/api/watchlist/check?symbol=${symbol}`); // using api helper with auth header
           setTracked(data.exists);
@@ -136,56 +106,8 @@ function DetailsContent() {
       init();
     }, [symbol]); 
 
-  // async function handleTrack() { //supabase watchlist toggle
-  //   if (!userId) return
-  //   setTrackLoading(true)
-  //   if (tracked) {
-  //     await supabase.from('watchlist').delete().eq('user_id', userId).eq('symbol', symbol)
-  //     setTracked(false)
-  //   } else {
-  //     await supabase.from('watchlist').insert({ user_id: userId, symbol })
-  //     setTracked(true)
-  //   }
-  //   setTrackLoading(false)
-  // }
   async function handleTrack() { //migrate from supabase to postgresql watchlist toggle
-    // const token = localStorage.getItem('token'); // moved to api helper, but we still want to check if token exists before allowing tracking actions
-    // if (!token) return;
-
     setTrackLoading(true);
-
-    //   try { // change to api helper with auth header
-    //     if (tracked) {
-    //       await fetch('http://3.149.137.146:3000/watchlist', {
-    //         method: 'DELETE',
-    //         headers: {
-    //           'Content-Type': 'application/json',
-    //           Authorization: `Bearer ${token}`,
-    //         },
-    //         body: JSON.stringify({ symbol }),
-    //       });
-
-    //       setTracked(false);
-
-    //     } else {
-    //       await fetch('http://3.149.137.146:3000/watchlist', {
-    //         method: 'POST',
-    //         headers: {
-    //           'Content-Type': 'application/json',
-    //           Authorization: `Bearer ${token}`,
-    //         },
-    //         body: JSON.stringify({ symbol }),
-    //       });
-
-    //       setTracked(true);
-    //     }
-
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-
-    //   setTrackLoading(false);
-    // }
       try {
         if (tracked) {
           await apiFetch('/api/watchlist', {
@@ -232,9 +154,9 @@ function DetailsContent() {
   }, [symbol])
 
   return (
-    <div className="space-y-4 p-4 max-w-6xl mx-auto text-white">
+     <div className={`space-y-4 p-4 max-w-6xl mx-auto ${current.invt} relative z-10`}>
       <h1 className="text-4xl font-bold text-center mb-2">{symbol}</h1>
-      <p className="text-center text-sm text-white/50">Live Data - NASDAQ</p>
+      <p className={`text-center text-sm ${current.glass.color}`}>Live Data - NASDAQ</p>
 
       {/* Search */}
       <div className="flex justify-center">
@@ -244,36 +166,86 @@ function DetailsContent() {
             placeholder="Search for another stock (e.g. MSFT, TSLA, SPY)"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg text-white text-sm placeholder-white/40 focus:outline-none transition"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)' }}
+            className={`w-full px-4 py-3 rounded-lg text-sm focus:outline-none transition ${current.input.focus}`}
+            style={{
+              ...current.input.norm,
+              color: current.input.norm.color,
+            }}
             suppressHydrationWarning
           />
+          {/* LOADING SPINNER */}
           {searching && (
             <div className="absolute right-4 top-1/2 -translate-y-1/2">
-              <div className="w-3 h-3 border border-white/30 border-t-white/80 rounded-full animate-spin" />
+              <div
+                className="w-3 h-3 border rounded-full animate-spin"
+                style={{
+                  borderColor:
+                    theme === 'dark'
+                      ? 'rgba(255,255,255,0.3)'
+                      : 'rgba(0,0,0,0.2)',
+                  borderTopColor: theme === 'dark' ? '#fff' : '#000',
+                }}
+              />
             </div>
           )}
+
+          {/* DROPDOWN RESULTS */}
           {showDropdown && results.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 rounded-lg overflow-hidden z-50"
-              style={{ background: 'rgba(15,15,30,0.95)', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(20px)' }}>
-              {results.map((result) => (
-                <button key={result.symbol} onClick={() => handleSelect(result.symbol)}
+            <div
+              className="absolute top-full left-0 right-0 mt-1 rounded-lg overflow-hidden z-50"
+              style={current.input.norm}
+            >
+              {results.map((result: any) => (
+                <button
+                  key={result.symbol}
+                  onClick={() => handleSelect(result.symbol)}
                   className="w-full px-4 py-3 flex justify-between items-center text-left transition-all"
-                  style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                  <span className="text-white font-semibold text-sm">{result.symbol}</span>
-                  <span className="text-white/40 text-xs truncate ml-4 max-w-xs text-right">{result.description}</span>
+                  style={{
+                    borderBottom: current.glass.border,
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background =
+                      theme === 'dark'
+                        ? 'rgba(0,0,0,0.1)'
+                        : 'rgba(0,0,0,0.1)')
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background = 'transparent')
+                  }
+                >
+                  <span className={`font-semibold text-sm ${current.input.norm.color}`}>
+                    {result.symbol}
+                  </span>
+                  <span className={`text-xs ml-4 text-right ${current.input.norm.color}`}>
+                    {result.description}
+                  </span>
                 </button>
               ))}
             </div>
           )}
-          {showDropdown && results.length === 0 && !searching && query.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 rounded-lg px-4 py-3 z-50"
-              style={{ background: 'rgba(15,15,30,0.95)', border: '1px solid rgba(255,255,255,0.15)' }}>
-              <p className="text-white/40 text-sm">No results for "{query}"</p>
-            </div>
-          )}
+
+          {/* NO RESULTS */}
+          {showDropdown &&
+            results.length === 0 &&
+            !searching &&
+            query.length > 0 && (
+              <div
+                className="absolute top-full left-0 right-0 mt-1 rounded-lg px-4 py-3 z-50"
+                style={{
+                  background:
+                    theme === 'dark'
+                      ? 'rgba(15,15,30,0.95)'
+                      : 'rgba(255,255,255,0.95)',
+                  border: current.glass.border,
+                  color: current.glass.color,
+                }}
+              >
+                <p className={current.invt}>
+                  No results for "{query}"
+                </p>
+              </div>
+            )}
         </div>
       </div>
 
@@ -282,31 +254,39 @@ function DetailsContent() {
         {loading ? <LoadingPulse message="Loading live price..." /> : quote ? (
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-3xl font-bold text-blue-400">${quote.price.toFixed(2)}</p>
-              <p className={`text-sm ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+              <p className={`text-3xl font-bold ${current.colored.blue}`}>
+                ${Number(quote.price).toFixed(2)}
+              </p>
+              <p className={`text-sm ${isPositive ? current.colored.green : current.colored.red}`}>
                 {isPositive ? '+' : ''}{quote.change.toFixed(2)} ({quote.changePercent.toFixed(2)}%)
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-white/50">Today's Range</p>
-              <p className="text-sm font-semibold text-white/80">${quote.low.toFixed(2)} — ${quote.high.toFixed(2)}</p>
-              <p className="text-xs text-white/50 mt-1">Open: ${quote.open.toFixed(2)}</p>
+              <p className={`text-xs ${current.invt}`}>
+                Today's Range
+              </p>
+              <p className={`text-sm font-semibold ${current.invt}`}>
+                ${quote.low.toFixed(2)} — ${quote.high.toFixed(2)}
+              </p>
+              <p className={`text-xs ${current.invt} mt-1`}>
+                Open: ${quote.open.toFixed(2)}
+              </p>
             </div>
           </div>
-        ) : <p className="text-red-400 text-sm">Failed to load price data.</p>}
+        ) : <p className={`text-sm ${current.colored.red}`}>Failed to load price data.</p>}
       </GlassCard>
 
       {/* Key Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: 'Current Price', value: `$${quote?.price.toFixed(2)}`, color: 'text-blue-400' },
-          { label: 'Day High', value: `$${quote?.high.toFixed(2)}`, color: 'text-green-400' },
-          { label: 'Day Low', value: `$${quote?.low.toFixed(2)}`, color: 'text-red-400' },
-          { label: 'Change %', value: `${isPositive ? '+' : ''}${quote?.changePercent.toFixed(2)}%`, color: isPositive ? 'text-green-400' : 'text-red-400' },
+          { label: 'Current Price', value: `$${quote?.price.toFixed(2)}`, color: current.colored.blue },
+          { label: 'Day High', value: `$${quote?.high.toFixed(2)}`, color: current.colored.green },
+          { label: 'Day Low', value: `$${quote?.low.toFixed(2)}`, color: current.colored.red },
+          { label: 'Change %', value: `${isPositive ? '+' : ''}${quote?.changePercent.toFixed(2)}%`, color: isPositive ? current.colored.green : current.colored.red },
         ].map(({ label, value, color }) => (
           <GlassCard key={label}>
-            <p className="text-white/50 text-xs">{label}</p>
-            <p className={`text-lg font-bold ${color}`}>{loading ? '...' : value}</p>
+            <p className={`text-s font-bold text-center ${current.invt}`}>{label}</p>
+            <p className={`text-lg font-bold text-center ${color}`}>{loading ? '...' : value}</p>
           </GlassCard>
         ))}
       </div>
@@ -314,9 +294,9 @@ function DetailsContent() {
       {/* TradingView Chart */}
       <GlassCard>
         <div className="mb-4">
-          <p className="text-white/40 text-xs uppercase tracking-widest">Price Chart</p>
+          <p className={`text-xs uppercase tracking-widest font-bold ${current.invt}`}>Price Chart</p>
           <p className="text-2xl font-bold">{loading ? '...' : `$${quote?.price.toFixed(2)}`}</p>
-          <p className={`text-sm mt-1 ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+          <p className={`text-sm mt-1 ${isPositive ? current.colored.green : current.colored.red}`}>
             {!loading && `${isPositive ? '↑' : '↓'} ${quote?.changePercent.toFixed(2)}% today`}
           </p>
         </div>
@@ -330,7 +310,7 @@ function DetailsContent() {
             <div className="space-y-3">
               {news.map((article) => <NewsItem key={article.url} {...article} />)}
             </div>
-          ) : <p className="text-white/40 text-sm">No recent news found.</p>}
+          ) : <p className={`text-sm ${current.invt}`}>No recent news found.</p>}
       </SectionCard>
 
       {/* AI Summary */}
