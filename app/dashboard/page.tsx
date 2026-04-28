@@ -361,7 +361,7 @@ export default function Page() {
               {sectors.map((sector: any, i: number) => (
                 <div key={sector.name}>
                   <div className="flex justify-between mb-1">
-                    <span className={`text-xs ${current.invt}`}>
+                    <span className={`text-xs ${current.text}`}>
                       {sector.name}
                     </span>
                     <span className={current.text}>
