@@ -73,7 +73,7 @@ function fmtVolume(v: number | null) {
 function FilterChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   
   const [theme, setTheme] = useState<Theme>(useTheme() ? 'dark' : 'light');
-  const current = theme === useTheme().theme ? themes.light : themes.dark
+  const current = theme === useTheme().theme ? themes.dark : themes.light
 
   return (
     <button
@@ -93,7 +93,7 @@ function SortIcon({ field, sortField, sortDir }: { field: string; sortField: str
   const [theme, setTheme] = useState<Theme>(useTheme() ? 'dark' : 'light');
   const current = theme === useTheme().theme ? themes.dark : themes.light
 
-  if (sortField !== field) return <span className={`${current.subText} ml-1`}>↕</span>
+  if (sortField !== field) return <span className={`${current.text} ml-1`}>↕</span>
   return <span className={`${current.colored.blue} font-bold ml-1`}>{sortDir === 'asc' ? '↑' : '↓'}</span>
 }
 
@@ -101,7 +101,7 @@ function ChangeCell({ val, pct }: { val: number | null; pct: number | null }) {
   const [theme, setTheme] = useState<Theme>(useTheme() ? 'dark' : 'light');
   const current = theme === useTheme().theme ? themes.dark : themes.light
   
-  if (val === null || pct === null) return <span className={`${current.invt}`}>—</span>
+  if (val === null || pct === null) return <span className={`${current.text}`}>—</span>
   const positive = pct >= 0
   return (
     <span className={positive ? current.colored.green : current.colored.red}>
@@ -126,7 +126,7 @@ export default function Screener() {
   const [progress, setProgress] = useState(0)
 
   const [theme, setTheme] = useState<Theme>(useTheme() ? 'dark' : 'light');
-  const current = theme === useTheme().theme ? themes.light : themes.dark
+  const current = theme === useTheme().theme ? themes.dark : themes.light
 
   const tickerList = useCallback(() => {
     const base = sector === 'All'
@@ -206,7 +206,7 @@ export default function Screener() {
 
   return (
     <div className="space-y-4 p-4 max-w-6xl mx-auto">
-      <h1 className={['text-3xl font-bold text-center', current.invt].join(' ')}>
+      <h1 className={['text-3xl font-bold text-center', current.text].join(' ')}>
         Stock Screener
       </h1>
 
@@ -258,7 +258,7 @@ export default function Screener() {
                     <th
                       key={key}
                       onClick={() => handleSort(key)}
-                      className={`pb-2 text-center ${current.invt} font-bold text-s cursor-pointer hover:${current.table.hover} transition select-none`}
+                      className={`pb-2 text-center ${current.text} font-bold text-s cursor-pointer hover:${current.table.hover} transition select-none`}
                         style={{ borderBottom: current.glass.border }}
                     >
                       {label}
@@ -280,21 +280,21 @@ export default function Screener() {
                     <td className={`py-2 font-semibold text-sm ${current.colored.blue} group-hover:text-blue-300`}>
                       {row.ticker}
                     </td>
-                    <td className={`py-2 text-sm ${current.invt}`}>{row.company}</td>
+                    <td className={`py-2 text-sm ${current.text}`}>{row.company}</td>
                     <td className="py-2">
                       <span className={`px-2 py-0.5 rounded-full text-xs text-white`}
                         style={{ background: current.button.login.norm.background }}>
                         {row.sector}
                       </span>
                     </td>
-                    <td className={`py-2 text-center text-sm ${current.invt} font-mono`}>
+                    <td className={`py-2 text-center text-sm ${current.text} font-mono`}>
                       {row.price !== null ? `$${fmt(row.price)}` : '—'}
                     </td>
                     <td className={`py-2 text-center text-sm font-semibold font-mono`}>
                       <ChangeCell val={row.change} pct={row.changePercent} />
                     </td>
-                    <td className={`py-2 text-center text-sm ${current.invt}`}>{row.marketCap}</td>
-                    <td className={`py-2 text-center text-sm ${current.invt} font-mono`}>
+                    <td className={`py-2 text-center text-sm ${current.text}`}>{row.marketCap}</td>
+                    <td className={`py-2 text-center text-sm ${current.text} font-mono`}>
                       {fmtVolume(row.volume)}
                     </td>
                   </tr>
@@ -306,7 +306,7 @@ export default function Screener() {
 
         {/* Pagination */}
         {!loading && totalPages > 1 && (
-          <div className={`flex items-center justify-between pt-3 mt-3 text-xs ${current.invt}`}>
+          <div className={`flex items-center justify-between pt-3 mt-3 text-xs ${current.text}`}>
             <span>
               {(page - 1) * PAGE_SIZE + 1} – {Math.min(page * PAGE_SIZE, sorted.length)} of {sorted.length}
             </span>
@@ -314,7 +314,7 @@ export default function Screener() {
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className={`px-3 py-1 rounded ${current.invt}/10 hover:${current.invt} cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition `}
+                className={`px-3 py-1 rounded ${current.text}/10 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition `}
                 style={{ border: current.glass.border }}
               >
                 ← Prev
@@ -322,7 +322,7 @@ export default function Screener() {
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className={`px-3 py-1 rounded ${current.invt} cursor-pointer hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition`}
+                className={`px-3 py-1 rounded ${current.text} cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition`}
                 style={{ border: current.glass.border }}
               >
                 Next →
@@ -332,9 +332,7 @@ export default function Screener() {
         )}
       </SectionCard>
 
-      <p className={['text-center', current.invt, 'text-xs mt-4'].join(' ')}>
-        Designed by Req
-      </p>
+      <p className={`text-center text-xs mt-8 ${current.text}`}>Designed for UTAR SL UECS3223 Cloud Computing Assignment</p>
     </div>
   )
 }

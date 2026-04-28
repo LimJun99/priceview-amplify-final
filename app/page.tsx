@@ -84,7 +84,7 @@ export default function Home() {
         <Button href="/dashboard" variant="solid">Go to Dashboard</Button>
       </GlassCard>
 
-      <p className={`text-center text-xs mt-8 ${current.text}`}>Designed by Req</p>
+      <p className={`text-center text-xs mt-8 ${current.text}`}>Designed for UTAR SL UECS3223 Cloud Computing Assignment</p>
     </div>
   )
 }

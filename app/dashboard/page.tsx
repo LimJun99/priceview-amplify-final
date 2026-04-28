@@ -80,7 +80,7 @@ export default function Page() {
   const [news, setNews] = useState<NewsArticle[]>([])
   const [newsLoading, setNewsLoading] = useState(false)
 
-  const [theme, setTheme] = useState<Theme>(useTheme().theme ? 'light' : 'dark');
+  const [theme, setTheme] = useState<Theme>(useTheme().theme ? 'dark' : 'light');
   const current = theme === useTheme().theme ? themes.dark : themes.light
 
   // Default to first stock once loaded
@@ -212,7 +212,7 @@ export default function Page() {
       }}
     >
       {/* TITLE */}
-      <h1 className={`text-3xl font-bold text-center ${current.invt}`}>
+      <h1 className={`text-3xl font-bold text-center ${current.text}`}>
         DASHBOARD
       </h1>
 
@@ -353,7 +353,7 @@ export default function Page() {
           {loadingStocks ? (
             <LoadingPulse message="Loading sectors..." />
           ) : sectors.length === 0 ? (
-            <p className={current.invt}>
+            <p className={current.text}>
               Add stocks to see sector breakdown.
             </p>
           ) : (
@@ -364,7 +364,7 @@ export default function Page() {
                     <span className={`text-xs ${current.invt}`}>
                       {sector.name}
                     </span>
-                    <span className={current.invt}>
+                    <span className={current.text}>
                       {sector.count} stock{sector.count !== 1 ? 's' : ''} ·{' '}
                       {sector.percent}%
                     </span>
@@ -384,7 +384,7 @@ export default function Page() {
           {loadingStocks ? (
             <LoadingPulse message="Loading watchlist..." />
           ) : stocks.length === 0 ? (
-            <p className={current.invt}>
+            <p className={current.text}>
               No stocks yet. Search above to add some.
             </p>
           ) : (
@@ -399,7 +399,7 @@ export default function Page() {
                     {['Symbol', 'Price', 'Change', ''].map((h) => (
                       <th
                         key={h}
-                        className={`pb-2 text-xs ${current.invt}`}
+                        className={`pb-2 text-xs ${current.text}`}
                       >
                         {h}
                       </th>
@@ -429,7 +429,7 @@ export default function Page() {
                         {stock.symbol}
                       </td>
 
-                      <td className={`${current.invt}`}>
+                      <td className={`${current.text}`}>
                         {/* ${stock.price.toFixed(2)} */}
                         ${Number(stock.price || 0).toFixed(2)}
                       </td>
@@ -502,7 +502,7 @@ export default function Page() {
                           
                         />
                         
-                        <p className={current.invt}>
+                        <p className={current.text}>
                           {stock.symbol}
                         </p>
                       </div>
@@ -517,7 +517,7 @@ export default function Page() {
         {/* STOCK CHART */}
         <GlassCard>
           <div className="flex justify-between mb-3">
-            <h2 className={`text-lg font-bold ${current.invt}`}>
+            <h2 className={`text-lg font-bold ${current.text}`}>
               Stock Chart
             </h2>
 
@@ -541,7 +541,7 @@ export default function Page() {
         {newsLoading ? (
           <LoadingPulse message="Loading news..." />
         ) : news.length === 0 ? (
-          <p className={current.invt}>
+          <p className={current.text}>
             No recent news for your watchlist.
           </p>
         ) : (
@@ -558,9 +558,7 @@ export default function Page() {
         <ComingSoon description="AI-powered portfolio analysis coming soon." />
       </SectionCard>
 
-      <p className={`text-center text-xs ${current.invt}`}>
-        Designed by Req
-      </p>
+      <p className={`text-center text-xs mt-8 ${current.text}`}>Designed for UTAR SL UECS3223 Cloud Computing Assignment</p>
     </div>
   )
 }

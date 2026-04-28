@@ -16,7 +16,7 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
 
   const [theme, setTheme] = useState<Theme>(useTheme() ? 'dark' : 'light');
-  const current = theme === useTheme().theme ? themes.light : themes.dark
+  const current = theme === useTheme().theme ? themes.dark : themes.light
 
 
   const passwordMatch = confirm.length > 0 && password !== confirm
@@ -76,7 +76,7 @@ export default function SignupPage() {
           {/* Header */}
           <div className="text-center space-y-1">
             <h1 className={`text-2xl font-bold tracking-wide`}>PriceView</h1>
-            <p className={`${current.invt} text-xs`}>Create your account</p>
+            <p className={`${current.text} text-xs`}>Create your account</p>
           </div>
 
           {/* Fields */}
@@ -84,34 +84,34 @@ export default function SignupPage() {
             <div className="relative">
               <input type="text" placeholder="Full Name" value={name}
                 onChange={e => setName(e.target.value)}
-                className={`w-full px-4 py-3 pr-10 rounded-full ${current.invt} text-sm focus:outline-none transition`}
+                className={`w-full px-4 py-3 pr-10 rounded-full ${current.text} text-sm focus:outline-none transition`}
                 style={inputStyle} />
-              <span className={`absolute right-4 top-1/2 -translate-y-1/2 ${current.invt} text-sm`}>👤</span>
+              <span className={`absolute right-4 top-1/2 -translate-y-1/2 ${current.text} text-sm`}>👤</span>
             </div>
             <div className="relative">
               <input type="email" placeholder="Email ID" value={email}
                 onChange={e => setEmail(e.target.value)}
-                className={`w-full px-4 py-3 pr-10 rounded-full ${current.invt} text-sm focus:outline-none transition `}
+                className={`w-full px-4 py-3 pr-10 rounded-full ${current.text} text-sm focus:outline-none transition `}
                 style={inputStyle} />
               <span className={`absolute right-4 top-1/2 -translate-y-1/2 text-black text-sm `}>✉</span>
             </div>
             <div className="relative">
               <input type={showPassword ? 'text' : 'password'} placeholder="Password" value={password}
                 onChange={e => setPassword(e.target.value)}
-                className={`w-full px-4 py-3 pr-10 rounded-full ${current.invt} text-sm  focus:outline-none transition`}
+                className={`w-full px-4 py-3 pr-10 rounded-full ${current.text} text-sm  focus:outline-none transition`}
                 style={inputStyle} />
               <button onClick={() => setShowPassword(!showPassword)}
-                className={`absolute right-4 top-1/2 -translate-y-1/2 ${current.invt} hover:${current.invt} transition text-sm `}>
+                className={`absolute right-4 top-1/2 -translate-y-1/2 ${current.text} hover:${current.text} transition text-sm `}>
                 {showPassword ? '🔓' : '🔒'}
               </button>
             </div>
             <div className="relative">
               <input type={showConfirm ? 'text' : 'password'} placeholder="Confirm Password" value={confirm}
                 onChange={e => setConfirm(e.target.value)}
-                className={`w-full px-4 py-3 pr-10 rounded-full ${current.invt} text-sm focus:outline-none transition`}
+                className={`w-full px-4 py-3 pr-10 rounded-full ${current.text} text-sm focus:outline-none transition`}
                 style={inputStyle}/>
               <button onClick={() => setShowConfirm(!showConfirm)}
-                className={`absolute right-4 top-1/2 -translate-y-1/2 ${current.invt} hover:${current.invt} transition text-sm `}>
+                className={`absolute right-4 top-1/2 -translate-y-1/2 ${current.text} hover:${current.text} transition text-sm `}>
                 {showConfirm ? '🔓' : '🔒'}
               </button>
             </div>
@@ -136,7 +136,7 @@ export default function SignupPage() {
             {loading ? 'Creating account...' : 'Create Account'}
           </button>
 
-          <p className={`text-center text-xs ${current.invt}`}>
+          <p className={`text-center text-xs ${current.text}`}>
             Already have an account?{' '}
             <a href="/login" className={`${current.colored.blue} hover:${current.colored.blue}underline transition`}>Login</a>
           </p>

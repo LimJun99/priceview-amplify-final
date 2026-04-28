@@ -48,7 +48,7 @@ function DetailsContent() {
   const [searching, setSearching] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const [theme, setTheme] = useState<Theme>(useTheme().theme ? 'light' : 'dark');
+  const [theme, setTheme] = useState<Theme>(useTheme().theme ? 'dark' : 'light');
   const current = theme === useTheme().theme ? themes.dark : themes.light
 
   const [quote, setQuote] = useState<{
@@ -154,7 +154,7 @@ function DetailsContent() {
   }, [symbol])
 
   return (
-     <div className={`space-y-4 p-4 max-w-6xl mx-auto ${current.invt} relative z-10`}>
+     <div className={`space-y-4 p-4 max-w-6xl mx-auto ${current.text} relative z-10`}>
       <h1 className="text-4xl font-bold text-center mb-2">{symbol}</h1>
       <p className={`text-center text-sm ${current.glass.color}`}>Live Data - NASDAQ</p>
 
@@ -241,7 +241,7 @@ function DetailsContent() {
                   color: current.glass.color,
                 }}
               >
-                <p className={current.invt}>
+                <p className={current.text}>
                   No results for "{query}"
                 </p>
               </div>
@@ -262,13 +262,13 @@ function DetailsContent() {
               </p>
             </div>
             <div className="text-right">
-              <p className={`text-xs ${current.invt}`}>
+              <p className={`text-xs ${current.text}`}>
                 Today's Range
               </p>
-              <p className={`text-sm font-semibold ${current.invt}`}>
+              <p className={`text-sm font-semibold ${current.text}`}>
                 ${quote.low.toFixed(2)} — ${quote.high.toFixed(2)}
               </p>
-              <p className={`text-xs ${current.invt} mt-1`}>
+              <p className={`text-xs ${current.text} mt-1`}>
                 Open: ${quote.open.toFixed(2)}
               </p>
             </div>
@@ -285,7 +285,7 @@ function DetailsContent() {
           { label: 'Change %', value: `${isPositive ? '+' : ''}${quote?.changePercent.toFixed(2)}%`, color: isPositive ? current.colored.green : current.colored.red },
         ].map(({ label, value, color }) => (
           <GlassCard key={label}>
-            <p className={`text-s font-bold text-center ${current.invt}`}>{label}</p>
+            <p className={`text-s font-bold text-center ${current.text}`}>{label}</p>
             <p className={`text-lg font-bold text-center ${color}`}>{loading ? '...' : value}</p>
           </GlassCard>
         ))}
@@ -294,7 +294,7 @@ function DetailsContent() {
       {/* TradingView Chart */}
       <GlassCard>
         <div className="mb-4">
-          <p className={`text-xs uppercase tracking-widest font-bold ${current.invt}`}>Price Chart</p>
+          <p className={`text-xs uppercase tracking-widest font-bold ${current.text}`}>Price Chart</p>
           <p className="text-2xl font-bold">{loading ? '...' : `$${quote?.price.toFixed(2)}`}</p>
           <p className={`text-sm mt-1 ${isPositive ? current.colored.green : current.colored.red}`}>
             {!loading && `${isPositive ? '↑' : '↓'} ${quote?.changePercent.toFixed(2)}% today`}
@@ -310,7 +310,7 @@ function DetailsContent() {
             <div className="space-y-3">
               {news.map((article) => <NewsItem key={article.url} {...article} />)}
             </div>
-          ) : <p className={`text-sm ${current.invt}`}>No recent news found.</p>}
+          ) : <p className={`text-sm ${current.text}`}>No recent news found.</p>}
       </SectionCard>
 
       {/* AI Summary */}
@@ -326,7 +326,7 @@ function DetailsContent() {
         </Button>
       </div>
 
-      <p className="text-center text-white/30 text-xs mt-6">Designed by Req</p>
+      <p className={`text-center text-xs mt-8 ${current.text}`}>Designed for UTAR SL UECS3223 Cloud Computing Assignment</p>
     </div>
   )
 }

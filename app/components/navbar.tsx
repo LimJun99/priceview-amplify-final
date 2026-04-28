@@ -27,7 +27,11 @@ export default function Navbar() {
 
         {/* Logo */} {/*click logo navigate to main dashboard page */}
         <div>
-          <a href="/dashboard" className="text-2xl font-bold text-white">PriceView</a>
+          {loggedIn ?(
+            <a href="/dashboard" className="text-2xl font-bold text-white">PriceView</a>
+            ):(
+            <a href="/" className="text-2xl font-bold text-white">PriceView</a>
+            )}
         </div>
 
         <div className="relative">

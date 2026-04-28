@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
 
   const [theme, setTheme] = useState<Theme>(useTheme() ? 'dark' : 'light');
-  const current = theme === useTheme().theme ? themes.light : themes.dark
+  const current = theme === useTheme().theme ? themes.dark : themes.light
 
   const inputStyle = {
     background: current.input.norm.background,
@@ -71,7 +71,7 @@ export default function LoginPage() {
           {/* Header */}
           <div className="text-center space-y-1">
             <h1 className="text-2xl font-bold tracking-wide">PriceView</h1>
-            <p className={`text-xs ${current.invt}`}>Sign in to your account</p>
+            <p className={`text-xs ${current.text}`}>Sign in to your account</p>
           </div>
 
           {/* Fields */}
@@ -100,7 +100,7 @@ export default function LoginPage() {
 
           {/* Remember + Forgot */}
           <div className="flex justify-between items-center text-xs">
-            <label className={`flex items-center gap-2 ${current.invt} cursor-pointer select-none`}>
+            <label className={`flex items-center gap-2 ${current.text} cursor-pointer select-none`}>
               <input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)}
                 className="accent-blue-500 w-3 h-3" />
               Remember me
@@ -125,7 +125,7 @@ export default function LoginPage() {
             {loading ? 'Signing in...' : 'Login'}
           </button>
 
-          <p className={`text-center text-xs ${current.invt} cursor-pointer`}>
+          <p className={`text-center text-xs ${current.text} cursor-pointer`}>
             Don't have an account?{' '}
             <a href="/signup" className={`${current.colored.blue} hover:${current.colored.blue}/80 underline transition`}>Register</a>
           </p>

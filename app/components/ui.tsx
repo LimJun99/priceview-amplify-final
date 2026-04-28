@@ -51,9 +51,7 @@ export const themes = {
     },
     filter:{
       active: {background:'transparent', borderColor: '#007AFF', color:'#007AFF'},
-      inactive: 'bg-transparent border border-transparent text-black cursor-pointer hover:border-black/40 hover:text-black'
-      // inactive: {background: 'transparent', border: '1px solid transparent', color: '#fff', cursor: 'pointer', hover:{borderColor: 'rgba(255,255,255,0.4)', color: 'rgba(255,255,255,1)'}},
-    },
+      inactive: 'bg-transparent border border-transparent text-white cursor-pointer hover:border-white/40 hover:text-white'},
     table:{
       hover:{background: 'rgba(0,0,0,0.1)'}
     },
@@ -102,8 +100,7 @@ export const themes = {
     },
     filter:{
       active: {background:'transparent', borderColor: '#007AFF', color:'#007AFF'},
-      inactive: 'bg-transparent border border-transparent text-white cursor-pointer hover:border-white/40 hover:text-white'
-      // inactive: {background: 'transparent', border: '1px solid transparent', color: '#fff', cursor: 'pointer', hover:{borderColor: 'rgba(255,255,255,0.4)', color: 'rgba(255,255,255,1)'}},
+      inactive: 'bg-transparent border border-transparent text-black cursor-pointer hover:border-black/40 hover:text-black',
     },
     table:{
       hover:{background: 'rgba(0,0,0,0.5)'}
@@ -332,12 +329,12 @@ export function ComingSoon({
 
 // Empty State
 export function EmptyState({ message }: { message: string }) {
-  const [theme, setTheme] = useState<Theme>(useTheme().theme ? 'light' : 'dark');
+  const [theme, setTheme] = useState<Theme>(useTheme().theme ? 'dark' : 'light');
   const current = theme === useTheme().theme ? themes.dark : themes.light
 
   return (
     <div className="flex items-center justify-center h-64">
-      <p className={`text-sm ${current.invt}`}>{message}</p>
+      <p className={`text-sm ${current.text}`}>{message}</p>
     </div>
   )
 }
