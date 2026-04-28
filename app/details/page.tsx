@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { getQuote, getCompanyNews, searchSymbol } from '@/app/lib/finnhub'
-// import { supabase } from '@/app/lib/supabase'
 import { GlassCard, SectionCard, ComingSoon, NewsItem, LoadingPulse, Button } from '@/app/components/ui'
 import { apiFetch } from '../lib/api'
 
