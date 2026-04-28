@@ -442,7 +442,7 @@ export default function Page() {
                         }
                       >
                         {stock.changePercent >= 0 ? '+' : ''}
-                        {stock.changePercent.toFixed(2)}%
+                        {Number(stock?.changePercent ?? 0).toFixed(2)}%
                       </td>
 
                       <td className="text-right">

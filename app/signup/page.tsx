@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-// import { supabase } from '@/app/lib/supabase'
-import { GlassCard } from '@/app/components/ui'
+import { GlassCard, useTheme, themes, Theme } from '@/app/components/ui'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -16,53 +15,19 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const [theme, setTheme] = useState<Theme>(useTheme() ? 'dark' : 'light');
+  const current = theme === useTheme().theme ? themes.light : themes.dark
+
+
   const passwordMatch = confirm.length > 0 && password !== confirm
 
   const inputStyle = {
-    background: 'rgba(255,255,255,0.05)',
-    border: '1px solid rgba(255,255,255,0.15)',
-    backdropFilter: 'blur(12px)',
+    background: current.input.norm.background,
+    border: current.input.norm.border,
+    backdropFilter: current.glass.backdropFilter,
+    color: current.input.norm.color,
   }
 
-  // async function handleSignUp() { //supabase auth
-  //   if (passwordMatch || !email || !password || !name) return
-  //   setLoading(true); setError('')
-  //   const { error } = await supabase.auth.signUp({
-  //     email, password,
-  //     options: { data: { full_name: name } },
-  //   })
-  //   if (error) { setError(error.message); setLoading(false); return }
-  //   router.push('/dashboard')
-  // }
-
-  // async function handleSignUp() { //migrate from supabase to postgresql auth V1
-  //   if (passwordMatch || !email || !password || !name) return;
-
-  //   setLoading(true);
-  //   setError('');
-
-  //     try {
-  //       const res = await fetch('http://3.149.137.146:3000/signup', { //EC2 IP
-  //         method: 'POST',
-  //         headers: { 'Content-Type': 'application/json' },
-  //         body: JSON.stringify({ email, password, name }),
-  //       });
-
-  //       // if (!res.ok) {
-  //       //   const text = await res.text();
-  //       //   throw new Error(text);
-  //       // }
-
-  //       const data = await res.json();
-
-  //       localStorage.setItem('token', data.token);
-  //       router.push('/dashboard');
-
-  //     } catch (err) {
-  //         if (err instanceof Error) setError(err.message);
-  //         setLoading(false);
-  //       }
-  //     }
   async function handleSignUp() { //migrate from supabase to postgresql auth V2, enhanced with cookie storage for proxy protection
     if (passwordMatch || !email || !password || !name) return;
 
@@ -110,8 +75,8 @@ export default function SignupPage() {
 
           {/* Header */}
           <div className="text-center space-y-1">
-            <h1 className="text-2xl font-bold tracking-wide">PriceView</h1>
-            <p className="text-white/40 text-xs">Create your account</p>
+            <h1 className={`text-2xl font-bold tracking-wide`}>PriceView</h1>
+            <p className={`${current.invt} text-xs`}>Create your account</p>
           </div>
 
           {/* Fields */}
@@ -119,53 +84,61 @@ export default function SignupPage() {
             <div className="relative">
               <input type="text" placeholder="Full Name" value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full px-4 py-3 pr-10 rounded-full text-white text-sm placeholder-white/30 focus:outline-none transition"
+                className={`w-full px-4 py-3 pr-10 rounded-full ${current.invt} text-sm focus:outline-none transition`}
                 style={inputStyle} />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 text-sm">👤</span>
+              <span className={`absolute right-4 top-1/2 -translate-y-1/2 ${current.invt} text-sm`}>👤</span>
             </div>
             <div className="relative">
               <input type="email" placeholder="Email ID" value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full px-4 py-3 pr-10 rounded-full text-white text-sm placeholder-white/30 focus:outline-none transition"
+                className={`w-full px-4 py-3 pr-10 rounded-full ${current.invt} text-sm focus:outline-none transition `}
                 style={inputStyle} />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 text-sm">✉</span>
+              <span className={`absolute right-4 top-1/2 -translate-y-1/2 text-black text-sm `}>✉</span>
             </div>
             <div className="relative">
               <input type={showPassword ? 'text' : 'password'} placeholder="Password" value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full px-4 py-3 pr-10 rounded-full text-white text-sm placeholder-white/30 focus:outline-none transition"
+                className={`w-full px-4 py-3 pr-10 rounded-full ${current.invt} text-sm  focus:outline-none transition`}
                 style={inputStyle} />
               <button onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition text-sm">
+                className={`absolute right-4 top-1/2 -translate-y-1/2 ${current.invt} hover:${current.invt} transition text-sm `}>
                 {showPassword ? '🔓' : '🔒'}
               </button>
             </div>
             <div className="relative">
               <input type={showConfirm ? 'text' : 'password'} placeholder="Confirm Password" value={confirm}
                 onChange={e => setConfirm(e.target.value)}
-                className="w-full px-4 py-3 pr-10 rounded-full text-white text-sm placeholder-white/30 focus:outline-none transition"
-                style={{ ...inputStyle, border: `1px solid ${passwordMatch ? 'rgba(255,80,80,0.5)' : 'rgba(255,255,255,0.15)'}` }} />
+                className={`w-full px-4 py-3 pr-10 rounded-full ${current.invt} text-sm focus:outline-none transition`}
+                style={inputStyle}/>
               <button onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition text-sm">
+                className={`absolute right-4 top-1/2 -translate-y-1/2 ${current.invt} hover:${current.invt} transition text-sm `}>
                 {showConfirm ? '🔓' : '🔒'}
               </button>
             </div>
-            {passwordMatch && <p className="text-red-400 text-xs pl-4">Passwords do not match</p>}
-            {error && <p className="text-red-400 text-xs pl-4">{error}</p>}
+            {passwordMatch && <p className={`${current.colored.red} text-xs pl-4`}>Passwords do not match</p>}
+            {error && <p className={ `${current.colored.red} text-xs pl-4`}>{error}</p>}
           </div>
 
           {/* Sign Up Button */}
           <button onClick={handleSignUp} disabled={loading || passwordMatch}
             className="w-full py-3 rounded-full font-semibold text-sm tracking-wide transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ background: 'rgba(255,255,255,0.9)', color: '#0a0a1a' }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,1)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.9)')}>
+            style={current.button.login.norm}
+            onMouseEnter={e => (
+              e.currentTarget.style.background = current.button.login.hover.background,
+              e.currentTarget.style.color = current.button.login.hover.color,
+              e.currentTarget.style.borderColor = current.button.login.hover.border,
+              e.currentTarget.style.cursor = "pointer"
+            )}
+            onMouseLeave={e => (
+              e.currentTarget.style.background = current.button.login.norm.background,
+              e.currentTarget.style.color = current.button.login.norm.color
+              )}>
             {loading ? 'Creating account...' : 'Create Account'}
           </button>
 
-          <p className="text-center text-xs text-white/40">
+          <p className={`text-center text-xs ${current.invt}`}>
             Already have an account?{' '}
-            <a href="/login" className="text-white/70 hover:text-white underline transition">Login</a>
+            <a href="/login" className={`${current.colored.blue} hover:${current.colored.blue}underline transition`}>Login</a>
           </p>
 
         </GlassCard>
